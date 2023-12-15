@@ -1,2 +1,14 @@
 ﻿  main.cpp
+C:\Users\User\Desktop\Computer Sci\3811 Graphics\cw2\cw2\main\main.cpp(75,45): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\User\Desktop\Computer Sci\3811 Graphics\cw2\cw2\main\main.cpp(76,45): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+C:\Users\User\Desktop\Computer Sci\3811 Graphics\cw2\cw2\main\main.cpp(80,51): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\User\Desktop\Computer Sci\3811 Graphics\cw2\cw2\main\main.cpp(81,51): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+C:\Users\User\Desktop\Computer Sci\3811 Graphics\cw2\cw2\main\main.cpp(85,50): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\User\Desktop\Computer Sci\3811 Graphics\cw2\cw2\main\main.cpp(86,50): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+C:\Users\User\Desktop\Computer Sci\3811 Graphics\cw2\cw2\main\main.cpp(90,50): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\User\Desktop\Computer Sci\3811 Graphics\cw2\cw2\main\main.cpp(91,50): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+C:\Users\User\Desktop\Computer Sci\3811 Graphics\cw2\cw2\main\main.cpp(101,51): warning C4100: 'y': unreferenced formal parameter
+C:\Users\User\Desktop\Computer Sci\3811 Graphics\cw2\cw2\main\main.cpp(101,44): warning C4100: 'x': unreferenced formal parameter
+C:\Users\User\Desktop\Computer Sci\3811 Graphics\cw2\cw2\main\main.cpp(135,81): warning C4100: 'mods': unreferenced formal parameter
+C:\Users\User\Desktop\Computer Sci\3811 Graphics\cw2\cw2\main\main.cpp(135,55): warning C4100: 'scancode': unreferenced formal parameter
   main.vcxproj -> C:\Users\User\Desktop\Computer Sci\3811 Graphics\cw2\cw2\bin\main-debug-x64-msc-v143.exe

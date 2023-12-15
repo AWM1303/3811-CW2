@@ -18,6 +18,8 @@
 #include "defaults.hpp"
 #include "loadobj.hpp"
 
+#define TO_RADIANS 3.14/180.0
+
 
 
 namespace
@@ -42,7 +44,130 @@ namespace
 			float radius;
 
 			float lastX, lastY;
+
+			// Camera position
+			float camX, camY, camZ;
+
+			struct Motion
+			{
+				bool Forward, Backward, Left, Right;
+			} motion;
+
+			// Constructor
+			CamCtrl_() : cameraActive(false), actionZoomIn(false), actionZoomOut(false),
+				phi(0.0f), theta(0.0f), radius(10.0f), lastX(0.0f), lastY(0.0f),
+				camX(0.0f), camY(0.0f), camZ(0.0f) {}
+
+			// Function to handle camera movement
+			void moveCamera()
+			{
+				if (actionZoomIn)
+					radius -= 0.1f;
+				if (actionZoomOut)
+					radius += 0.1f;
+
+				// Limit the radius to avoid going too close or too far
+				radius = std::max(0.1f, std::min(radius, 50.0f));
+
+				// Update camera position based on keyboard input
+				if (motion.Forward)
+				{
+					camX += cos((theta + 90) * TO_RADIANS) / 5.0;
+					camZ -= sin((theta + 90) * TO_RADIANS) / 5.0;
+				}
+				if (motion.Backward)
+				{
+					camX += cos((theta + 90 + 180) * TO_RADIANS) / 5.0;
+					camZ -= sin((theta + 90 + 180) * TO_RADIANS) / 5.0;
+				}
+				if (motion.Left)
+				{
+					camX += cos((theta + 90 + 90) * TO_RADIANS) / 5.0;
+					camZ -= sin((theta + 90 + 90) * TO_RADIANS) / 5.0;
+				}
+				if (motion.Right)
+				{
+					camX += cos((theta + 90 - 90) * TO_RADIANS) / 5.0;
+					camZ -= sin((theta + 90 - 90) * TO_RADIANS) / 5.0;
+				}
+
+				// Limit the values of pitch between -60 and 70
+				if (phi >= 70)
+					phi = 70;
+				if (phi <= -60)
+					phi = -60;
+			}
+
+			void keyboard_up(unsigned char key, int x, int y)
+			{
+				switch (key)
+				{
+				case 'W':
+				case 'w':
+					motion.Forward = false;
+					break;
+				case 'A':
+				case 'a':
+					motion.Left = false;
+					break;
+				case 'S':
+				case 's':
+					motion.Backward = false;
+					break;
+				case 'D':
+				case 'd':
+					motion.Right = false;
+					break;
+				case 'E':
+				case 'e':
+					// Handle upward movement (E key)
+					camY -= 0.1f;
+					break;
+				case 'Q':
+				case 'q':
+					// Handle downward movement (Q key)
+					camY += 0.1f;
+					break;
+				}
+			}
+
+
+			void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+			{
+				auto* camCtrl = static_cast<CamCtrl_*>(glfwGetWindowUserPointer(window));
+
+				if (action == GLFW_PRESS)
+				{
+					switch (key)
+					{
+					case GLFW_KEY_ESCAPE:
+						glfwSetWindowShouldClose(window, GLFW_TRUE);
+						break;
+					case GLFW_KEY_LEFT_SHIFT:
+						camCtrl->actionZoomIn = true;
+						break;
+					case GLFW_KEY_LEFT_CONTROL:
+						camCtrl->actionZoomOut = true;
+						break;
+						// Add more cases for other keys if needed
+					}
+				}
+				else if (action == GLFW_RELEASE)
+				{
+					switch (key)
+					{
+					case GLFW_KEY_LEFT_SHIFT:
+						camCtrl->actionZoomIn = false;
+						break;
+					case GLFW_KEY_LEFT_CONTROL:
+						camCtrl->actionZoomOut = false;
+						break;
+						// Add more cases for other keys if needed
+					}
+				}
+			}
 		} camControl;
+
 	};
 	
 	void glfw_callback_error_( int, char const* );
@@ -115,7 +240,12 @@ int main() try
 	// TODO: Additional event handling setup
 	State_ state{};
 	glfwSetWindowUserPointer(window, &state);
-	glfwSetKeyCallback( window, &glfw_callback_key_ );
+
+	// Capture camControl by reference in the lambda capture list
+	glfwSetKeyCallback(window, &glfw_callback_key_);
+
+
+
 
 	// Set up drawing stuff
 	glfwMakeContextCurrent( window );
@@ -212,9 +342,9 @@ int main() try
 		last = now;
 
 		//To rotate or not
-		angle += dt * kPi_ * 0.3f;
+		/*angle += dt * kPi_ * 0.3f;
 		if (angle >= 2.f * kPi_)
-			angle -= 2.f * kPi_;
+			angle -= 2.f * kPi_;*/
 
 		// Update camera state
 		if (state.camControl.actionZoomIn)
@@ -225,6 +355,7 @@ int main() try
 		if (state.camControl.radius <= 0.1f)
 			state.camControl.radius = 0.1f;
 
+		//camControl.moveCamera();
 		// Update: compute matrices
 		//TODO: define and compute projCameraWorld matrix
 
@@ -332,19 +463,22 @@ namespace
 			// Camera controls if camera is active
 			if (state->camControl.cameraActive)
 			{
-				if (GLFW_KEY_W == aKey)
+				// Separate handling for the space key
+				if (GLFW_KEY_W == aKey && GLFW_PRESS == aAction)
 				{
-					if (GLFW_PRESS == aAction)
-						state->camControl.actionZoomIn = true;
-					else if (GLFW_RELEASE == aAction)
-						state->camControl.actionZoomIn = false;
+					state->camControl.actionZoomIn = true;
 				}
-				else if (GLFW_KEY_S == aKey)
+				else if (GLFW_KEY_W == aKey && GLFW_RELEASE == aAction)
 				{
-					if (GLFW_PRESS == aAction)
-						state->camControl.actionZoomOut = true;
-					else if (GLFW_RELEASE == aAction)
-						state->camControl.actionZoomOut = false;
+					state->camControl.actionZoomIn = false;
+				}
+				else if (GLFW_KEY_S == aKey && GLFW_PRESS == aAction)
+				{
+					state->camControl.actionZoomOut = true;
+				}
+				else if (GLFW_KEY_S == aKey && GLFW_RELEASE == aAction)
+				{
+					state->camControl.actionZoomOut = false;
 				}
 			}
 		}
