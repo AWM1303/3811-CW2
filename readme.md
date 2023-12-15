@@ -1,5 +1,7 @@
 COMP3811 Coursework 2
 =====================
+**IMPORTANT**
+**WHEN GIT PULLING, MANUALLY ADD parlahti.obj AND LOADOBJ.ipch because their file sizes are too big** 
 
 Base project for the COMP3811 Coursework 2. Do not re-distribute the code
 outside of Minerva.
